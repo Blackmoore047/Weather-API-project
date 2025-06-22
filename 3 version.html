@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Погода в городе</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      color: #333;
+    }
+    #weatherResult {
+      background: #fff;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      border-radius: 12px;
+      padding: 20px 30px;
+      margin-top: 20px;
+      max-width: 320px;
+      text-align: center;
+      font-size: 18px;
+    }
+    input, button {
+      font-size: 16px;
+      padding: 8px 12px;
+      margin: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <h1>Погода в городе</h1>
+  <input type="text" id="cityInput" placeholder="Введите город" value="Уфа" />
+  <button id="getWeatherBtn">Показать погоду</button>
+
+  <div id="weatherResult"></div>
+
+  <script>
+    const apiKey = '96802caa782dcad2839dc69a9ffac707';
+
+    document.getElementById('getWeatherBtn').onclick = function() {
+      const city = document.getElementById('cityInput').value;
+      fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=ru`)
+        .then(response => response.json())
+        .then(data => {
+          if(data.cod !== 200) {
+            document.getElementById('weatherResult').innerText = 'Город не найден';
+            return;
+          }
+          const temp = data.main.temp;
+          const humidity = data.main.humidity;
+          const windSpeed = data.wind.speed;
+          const desc = data.weather[0].description;
+          document.getElementById('weatherResult').innerHTML = `
+            <strong>${city}</strong><br>
+            Температура: ${temp}°C<br>
+            Влажность: ${humidity}%<br>
+            Ветер: ${windSpeed} м/с<br>
+            Описание: ${desc}
+          `;
+        })
+        .catch(() => {
+          document.getElementById('weatherResult').innerText = 'Ошибка при получении данных';
+        });
+    }
+  </script>
+</body>
+</html>
